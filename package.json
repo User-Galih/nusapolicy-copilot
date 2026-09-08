@@ -1,0 +1,12 @@
+{
+  "name": "nusapolicy-copilot-root",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "npm run build --prefix apps/web",
+    "start": "npm run start --prefix apps/web"
+  },
+  "dependencies": {
+    "next": "^14.2.24"
+  }
+}
