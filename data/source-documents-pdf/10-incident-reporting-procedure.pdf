@@ -1,0 +1,68 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1318 >>
+stream
+BT
+/F1 9 Tf
+40 760 Td
+13 TL
+(NUSAWORKS INTERNAL POLICY - CONFIDENTIAL) '
+(Document: Prosedur Pelaporan Insiden NusaWorks) '
+(Version: 1.0 | Owner: Security Engineering) '
+(Effective Date: 2026-10-01) '
+(--------------------------------------------------------------------------------) '
+() '
+([PROSEDUR PELAPORAN INSIDEN]) '
+() '
+() '
+(>> 11.1 Jenis Insiden) '
+() '
+(Insiden mencakup kehilangan perangkat, dugaan akses tidak sah, phishing,) '
+(kebocoran data, gangguan sistem penting, dan pelanggaran keamanan fisik.) '
+() '
+(>> 11.2 Kanal dan Waktu Pelaporan) '
+() '
+(Insiden keamanan dilaporkan melalui portal incident. Untuk insiden kritis) '
+(seperti kehilangan perangkat atau dugaan kebocoran data, karyawan juga) '
+(menghubungi Security Engineering dan direct manager maksimal satu jam) '
+(setelah diketahui.) '
+() '
+(>> 11.3 Tingkat Keparahan) '
+() '
+(Severity 1 adalah insiden yang berdampak pada banyak pengguna atau data) '
+(rahasia dan harus direspons oleh on-call Security Engineering dalam 30) '
+(menit. Severity 2 ditargetkan mendapat respons awal dalam empat jam kerja.) '
+() '
+(>> 11.4 Bukti dan Komunikasi) '
+() '
+(Karyawan menyimpan bukti yang relevan, seperti screenshot atau email asli,) '
+(tetapi tidak menghapus log dan tidak menghubungi pihak eksternal tanpa) '
+(arahan Incident Commander.) '
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001611 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1679
+%%EOF

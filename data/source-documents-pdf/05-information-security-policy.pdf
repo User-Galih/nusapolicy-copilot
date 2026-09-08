@@ -1,0 +1,67 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1232 >>
+stream
+BT
+/F1 9 Tf
+40 760 Td
+13 TL
+(NUSAWORKS INTERNAL POLICY - CONFIDENTIAL) '
+(Document: Kebijakan Keamanan Informasi NusaWorks) '
+(Version: 1.0 | Owner: Security Engineering) '
+(Effective Date: 2026-10-01) '
+(--------------------------------------------------------------------------------) '
+() '
+([KEBIJAKAN KEAMANAN INFORMASI]) '
+() '
+() '
+(>> 6.1 Kata Sandi dan MFA) '
+() '
+(Setiap akun perusahaan wajib menggunakan kata sandi unik dan multi-factor) '
+(authentication. Kata sandi tidak boleh dibagikan melalui chat, email, atau) '
+(dokumen.) '
+() '
+(>> 6.2 Email Phishing) '
+() '
+(Jika menerima email phishing yang dicurigai, karyawan tidak boleh membuka) '
+(tautan atau lampiran. Karyawan meneruskan email tersebut sebagai attachment) '
+(ke security@nusaworks.example dan melaporkannya melalui portal incident.) '
+() '
+(>> 6.3 Klasifikasi Data) '
+() '
+(Data Internal hanya boleh dibagikan kepada karyawan yang membutuhkan akses) '
+(kerja. Data Rahasia memerlukan akses berbasis peran dan tidak boleh dikirim) '
+(ke akun email pribadi.) '
+() '
+(>> 6.4 Kehilangan Perangkat) '
+() '
+(Laptop atau ponsel kerja yang hilang harus dilaporkan ke Security) '
+(Engineering dan direct manager maksimal satu jam setelah diketahui hilang.) '
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001525 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1593
+%%EOF
