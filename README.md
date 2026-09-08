@@ -1,5 +1,6 @@
 # NusaPolicy Copilot
 
+**Link: https://nusapolicy-copilot-git-main-galih-putra-pratamas-projects.vercel.app/** 
 NusaPolicy Copilot adalah sistem **Retrieval-Augmented Generation (RAG)** end-to-end berbahasa Indonesia untuk pencarian kebijakan internal perusahaan dengan **sitasi sumber terverifikasi**, **penolakan aman (safe refusal)** terhadap pertanyaan di luar dokumen, dan **evaluasi terukur**.
 
 > **Pernyataan Data:** Seluruh dokumen kebijakan dan data perusahaan (NusaWorks) dalam repository ini bersifat fiktif, dibuat orisinil untuk keperluan demonstrasi portofolio AI Engineer. Sistem ini bukan nasihat hukum, HR, atau finansial.
