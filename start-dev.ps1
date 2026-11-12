@@ -35,7 +35,7 @@ Write-Host "===== DATABASE AKTIF (VMMEM dibatasi 1GB) =====" -ForegroundColor Gr
 Write-Host ""
 Write-Host "Terminal 1 (API):" -ForegroundColor White
 Write-Host '  $env:DATABASE_URL = "postgresql+psycopg://nusapolicy:change-me-for-local-development@localhost:5432/nusapolicy"' -ForegroundColor Gray
-Write-Host "  .\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir apps/api --port 8000 --reload" -ForegroundColor Gray
+Write-Host "  python -m uvicorn app.main:app --app-dir apps/api --port 8000 --reload" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Terminal 2 (Web):" -ForegroundColor White
 Write-Host "  cd apps/web; npm run dev" -ForegroundColor Gray

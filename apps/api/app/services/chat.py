@@ -1,24 +1,24 @@
-"""Grounded chat answering, refusal enforcement, and trace logging."""
+"""Grounded chat answering, refusal enforcement, and trace logging using Google AI Studio Gemini API."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+import re
 import time
 from typing import Any
 from urllib import request as urlrequest
-import json
-import re
 
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.db.models import AnswerFeedback, ChatTrace, ChatTraceCitation
+from app.db.models import ChatTrace, ChatTraceCitation
 from app.schemas.chat import ChatResponse, Citation
 from app.services.retrieval import RetrievedChunk
 
 
 REFUSAL_MESSAGE = "Informasi tersebut tidak tersedia dalam dokumen kebijakan NusaWorks."
 EVIDENCE_THRESHOLD = 0.012
+GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
 
 
 def decompose_question(question: str) -> list[str]:
@@ -82,55 +82,43 @@ def assemble_grounded_prompt(
 
 def call_model_provider(prompt: str) -> tuple[str, dict[str, Any]]:
     settings = get_settings()
-    endpoint = f"{settings.ninerouter_url.rstrip('/')}/v1/chat/completions"
+    model_name = settings.gemini_model.removeprefix("models/")
     payload = {
-        "model": settings.ninerouter_model,
-        "messages": [
-            {"role": "system", "content": "Jawab faktual hanya berdasarkan konteks yang diberikan."},
-            {"role": "user", "content": prompt},
-        ],
-        "temperature": 0.0,
-        "max_tokens": 350,
+        "model": model_name,
+        "system_instruction": "Jawab faktual hanya berdasarkan konteks yang diberikan.",
+        "input": prompt,
+        "store": False,
+        "generation_config": {
+            "max_output_tokens": 500,
+        },
     }
     req = urlrequest.Request(
-        endpoint,
+        GEMINI_INTERACTIONS_URL,
         data=json.dumps(payload).encode("utf-8"),
         headers={
-            "Authorization": f"Bearer {settings.ninerouter_api_key.get_secret_value()}",
+            "x-goog-api-key": settings.gemini_api_key.get_secret_value(),
             "Content-Type": "application/json",
+            "Api-Revision": "2026-05-20",
         },
         method="POST",
     )
     with urlrequest.urlopen(req, timeout=45) as response:
         raw_body = response.read().decode("utf-8").strip()
 
-    # Handle both normal JSON and SSE streaming chunks (data: {...})
-    if raw_body.startswith("data:"):
-        content_parts: list[str] = []
-        usage: dict[str, Any] = {}
-        for line in raw_body.splitlines():
-            line = line.strip()
-            if not line.startswith("data:"):
-                continue
-            payload_str = line[len("data:"):].strip()
-            if not payload_str or payload_str == "[DONE]":
-                continue
-            try:
-                chunk = json.loads(payload_str)
-                if "usage" in chunk and chunk["usage"]:
-                    usage = chunk["usage"]
-                choices = chunk.get("choices", [])
-                if choices:
-                    delta = choices[0].get("delta", {})
-                    text = delta.get("content") or choices[0].get("text") or ""
-                    if text:
-                        content_parts.append(text)
-            except json.JSONDecodeError:
-                continue
-        return "".join(content_parts).strip(), usage
-    else:
-        data = json.loads(raw_body)
-        return data["choices"][0]["message"]["content"].strip(), data.get("usage", {})
+    data = json.loads(raw_body)
+    text_parts: list[str] = []
+    for step in data.get("steps", []):
+        if step.get("type") == "model_output":
+            for item in step.get("content", []):
+                if item.get("type") == "text" and item.get("text"):
+                    text_parts.append(item["text"])
+
+    raw_usage = data.get("usage", {})
+    usage = {
+        "prompt_tokens": raw_usage.get("total_input_tokens") or raw_usage.get("prompt_tokens"),
+        "completion_tokens": raw_usage.get("total_output_tokens") or raw_usage.get("completion_tokens"),
+    }
+    return "".join(text_parts).strip(), usage
 
 
 def generate_grounded_answer(
@@ -174,7 +162,7 @@ def generate_grounded_answer(
     trace = ChatTrace(
         question=question,
         answer=answer,
-        model=settings.ninerouter_model,
+        model=settings.gemini_model,
         latency_ms=latency_ms,
         prompt_tokens=usage.get("prompt_tokens"),
         completion_tokens=usage.get("completion_tokens"),
@@ -199,6 +187,6 @@ def generate_grounded_answer(
         answer=answer,
         was_refused=was_refused,
         citations=citations,
-        model=settings.ninerouter_model,
+        model=settings.gemini_model,
         latency_ms=latency_ms,
     )

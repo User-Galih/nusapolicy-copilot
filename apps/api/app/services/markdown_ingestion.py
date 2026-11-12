@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.data_contracts import _parse_front_matter
 from app.db.models import Document, DocumentChunk
+from app.services.embeddings import EmbeddingProvider
 
 
 HEADING_PATTERN = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
@@ -113,14 +114,34 @@ def chunk_policy(policy: ParsedPolicy, max_tokens: int = 450, overlap_tokens: in
     return chunks
 
 
-def index_policy(session: Session, policy: ParsedPolicy, source_root: Path) -> Document:
+def index_policy(
+    session: Session,
+    policy: ParsedPolicy,
+    source_root: Path,
+    embedder: EmbeddingProvider | None = None,
+) -> Document:
     source_uri = policy.path.relative_to(source_root).as_posix()
     document = session.scalar(select(Document).where(Document.source_uri == source_uri))
-    if document and document.content_hash == policy.content_hash:
+    has_missing_embeddings = bool(
+        document and any(chunk.embedding is None for chunk in document.chunks)
+    )
+    if document and document.content_hash == policy.content_hash and not has_missing_embeddings:
         return document
     if document is None:
         document = Document(source_uri=source_uri)
         session.add(document)
+
+    parsed_chunks = chunk_policy(policy)
+    chunk_embeddings: list[list[float] | None] = [None] * len(parsed_chunks)
+    if embedder is not None and parsed_chunks:
+        try:
+            texts_to_embed = [
+                f"{policy.metadata['title']} ({chunk.section_path}): {chunk.content}"
+                for chunk in parsed_chunks
+            ]
+            chunk_embeddings = embedder.embed_passages(texts_to_embed)
+        except Exception:
+            chunk_embeddings = [None] * len(parsed_chunks)
 
     document.source_type = "local_markdown"
     document.title = policy.metadata["title"]
@@ -139,16 +160,24 @@ def index_policy(session: Session, policy: ParsedPolicy, source_root: Path) -> D
             section_path=chunk.section_path,
             content=chunk.content,
             token_count=chunk.token_count,
-            embedding=None,
+            embedding=chunk_embeddings[idx] if idx < len(chunk_embeddings) else None,
             metadata_json={"source_uri": source_uri},
         )
-        for chunk in chunk_policy(policy)
+        for idx, chunk in enumerate(parsed_chunks)
     )
     session.flush()
     return document
 
 
-def index_directory(session: Session, source_root: Path) -> list[Document]:
-    documents = [index_policy(session, parse_policy(path), source_root) for path in sorted(source_root.glob("*.md"))]
+def index_directory(
+    session: Session,
+    source_root: Path,
+    embedder: EmbeddingProvider | None = None,
+) -> list[Document]:
+    active_embedder = embedder or EmbeddingProvider()
+    documents = [
+        index_policy(session, parse_policy(path), source_root, embedder=active_embedder)
+        for path in sorted(source_root.glob("*.md"))
+    ]
     session.commit()
     return documents

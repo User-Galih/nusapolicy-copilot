@@ -19,12 +19,14 @@ Sistem **Retrieval-Augmented Generation (RAG)** enterprise-grade berbahasa Indon
        ↓ REST API
 [FastAPI Backend]
   ├─ Ingestion Parser (Markdown front-matter + heading-aware chunking)
-  ├─ 9router Embedding API (`openrouter/openai/text-embedding-3-small`, 1536 dim)
+  ├─ Google AI Studio Embedding API (`gemini-embedding-2`, 1536 dim)
   ├─ PostgreSQL 16 + pgvector (hybrid search + traces + feedback)
-  └─ 9router Model Gateway (OpenAI-compatible prompt grounding)
+  └─ Google AI Studio Interactions API (`gemini-3.5-flash-lite` prompt grounding)
 ```
 
 ## 4. Keputusan Arsitektur Kunci
-1. **PostgreSQL + pgvector satu kesatuan:** tidak menambah Pinecone/Elasticsearch terpisah agar arsitektur operasional tetap efisien dan mudah dijalankan lokal.
-2. **Gateway-managed embedding:** embedding query dan dokumen dihasilkan melalui endpoint 9router yang OpenAI-compatible. Model embedding dikelola lewat environment configuration sehingga dapat diganti tanpa mengubah retrieval service.
+1. **PostgreSQL + pgvector satu kesatuan:** tidak menambah Pinecone/Elasticsearch terpisah agar arsitektur operasional tetap efisien dan mudah dijalankan lokal maupun di Supabase.
+2. **Google AI Studio Gemini Free Tier:**
+   - **Text Generation:** `gemini-3.5-flash-lite` (Free tier: 15 RPM, 250K TPM, 500 RPD) melalui Interactions API (`v1beta/interactions`).
+   - **Embeddings:** `gemini-embedding-2` (Free tier: 100 RPM, 30K TPM, 1K RPD) dengan `output_dimensionality=1536` untuk kompatibilitas langsung dengan kolom `VECTOR(1536)` di pgvector.
 3. **Evidence threshold:** membatasi jawaban hanya untuk retrieval score di atas ambang batas.

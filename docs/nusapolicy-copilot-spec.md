@@ -6,7 +6,7 @@ Build an Indonesian-language internal policy assistant that answers employee que
 
 ## Portfolio Value
 
-The project demonstrates end-to-end AI engineering: document ingestion, hybrid retrieval, grounded generation, evaluation, model routing through an OpenAI-compatible provider, observability, containerization, and a usable product interface.
+The project demonstrates end-to-end AI engineering: document ingestion, hybrid retrieval, grounded generation via Google AI Studio Gemini API (`gemini-3.5-flash-lite` & `gemini-embedding-2`), evaluation, observability, containerization, and a usable product interface.
 
 ## Users
 
@@ -21,7 +21,7 @@ The project demonstrates end-to-end AI engineering: document ingestion, hybrid r
 - PostgreSQL as source of truth, `pgvector` for embeddings, and PostgreSQL full-text search for keywords.
 - FastAPI endpoints for document indexing, chat, feedback, evaluation, and health.
 - Hybrid retrieval using vector search, full-text search, reciprocal-rank fusion, and evidence thresholding.
-- Server-side OpenAI-compatible chat calls through `9router` using `NINEROUTER_URL`, `NINEROUTER_API_KEY`, and `NINEROUTER_MODEL`; local multilingual embeddings keep policy text inside the application runtime.
+- Server-side chat and embedding calls through Google AI Studio Gemini API using `GEMINI_API_KEY`, `GEMINI_MODEL` (`gemini-3.5-flash-lite`), and `GEMINI_EMBEDDING_MODEL` (`gemini-embedding-2` with 1536 dimensions).
 - Citations on grounded answers and safe refusals for questions without evidence.
 - A 50-case golden dataset, Docker Compose, GitHub Actions, and a Next.js UI.
 
@@ -42,11 +42,11 @@ Each source file starts with YAML fields: `document_id`, `title`, `version`, `ef
 ```text
 Markdown policies -> parser -> normalized sections -> chunks + hashes
   -> PostgreSQL document catalog and document_chunks
-  -> pgvector embeddings + PostgreSQL full-text index
+  -> pgvector embeddings (gemini-embedding-2) + PostgreSQL full-text index
 
 Question -> FastAPI -> vector top-k + keyword top-k
   -> reciprocal-rank fusion -> evidence threshold
-  -> 9router -> grounded answer + citations + trace + feedback
+  -> Google AI Studio (gemini-3.5-flash-lite) -> grounded answer + citations + trace + feedback
 ```
 
 ## Database Model
@@ -89,7 +89,7 @@ Success targets: Recall@5 >= 0.85, citation accuracy >= 0.85, and refusal accura
 
 ## Tech Stack
 
-- Python 3.11+, FastAPI, SQLAlchemy 2, Alembic, Pydantic 2, FastEmbed, pytest.
+- Python 3.11+, FastAPI, SQLAlchemy 2, Alembic, Pydantic 2, Google AI Studio Gemini API, pytest.
 - PostgreSQL 16 + pgvector.
 - Next.js 16, TypeScript, Tailwind CSS, shadcn/ui, Vitest, Playwright.
 - Docker Compose and GitHub Actions.
@@ -97,6 +97,6 @@ Success targets: Recall@5 >= 0.85, citation accuracy >= 0.85, and refusal accura
 ## Constraints and Future Work
 
 - Never commit API keys or `.env` files; use `.env.example` with blank values.
-- Keep provider keys exclusively in FastAPI; the browser never calls `9router`.
+- Keep provider keys exclusively in FastAPI; the browser never calls Google AI Studio API directly.
 - The corpus is fictional and released with repository code under MIT terms.
 - Future work: read-only Google Drive connector, then Notion adapter, then access-control design before any email ingestion.

@@ -18,9 +18,9 @@ services:
       context: ../apps/api
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://nusapolicy:change-me-for-local-development@db:5432/nusapolicy}
-      NINEROUTER_URL: ${NINEROUTER_URL:-http://host.docker.internal:20128}
-      NINEROUTER_API_KEY: ${NINEROUTER_API_KEY:-}
-      NINEROUTER_MODEL: ${NINEROUTER_MODEL:-master-fallback}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      GEMINI_EMBEDDING_MODEL: ${GEMINI_EMBEDDING_MODEL:-gemini-embedding-2}
     ports:
       - "8000:8000"
     depends_on:
