@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { documentSourcePdfUrl, fetchDocuments, triggerReindex } from "../../lib/api";
 import { DocumentSummary } from "../../lib/types";
 
-export default function AdminPage() {
+export default function AdminCatalogPage() {
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
+  const [selectedWorkspaceFilter, setSelectedWorkspaceFilter] = useState<string>("all");
   const [indexing, setIndexing] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -27,7 +28,9 @@ export default function AdminPage() {
     try {
       const result = await triggerReindex();
       setDocuments(result.indexed_documents);
-      setMessage(`${result.indexed_documents.length} dokumen berhasil dikirim untuk pengindeksan ulang.`);
+      setMessage(
+        `${result.indexed_documents.length} dokumen lintas workspace berhasil diindeks ulang.`
+      );
     } catch (caughtError) {
       setMessage((caughtError as Error).message);
     } finally {
@@ -35,64 +38,142 @@ export default function AdminPage() {
     }
   }
 
+  const filteredDocs =
+    selectedWorkspaceFilter === "all"
+      ? documents
+      : documents.filter((d) => (d.workspace_id || "nusaworks-corp") === selectedWorkspaceFilter);
+
   return (
-    <div className="max-w-6xl">
-      <section className="grid lg:grid-cols-[1fr_auto] gap-7 lg:items-end mb-10">
+    <div className="space-y-8">
+      <section className="grid lg:grid-cols-[1fr_auto] gap-6 lg:items-end border-b border-[#d5e0dc] pb-6">
         <div>
-          <p className="text-sm font-medium text-[#0e716a]">NusaWorks policy knowledge</p>
-          <h1 className="max-w-3xl mt-3 font-display text-4xl sm:text-5xl font-semibold tracking-[-0.055em] leading-[0.97] text-[#193141] text-balance">Dokumen yang mendasari setiap jawaban.</h1>
-          <p className="max-w-2xl mt-5 text-base leading-7 text-[#68777d]">Katalog ini menunjukkan sumber yang digunakan NusaPolicy saat mengambil bukti dan membuat sitasi.</p>
+          <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#0b6e66]">
+            Multi-Tenant Corpus Governance
+          </span>
+          <h1 className="mt-2 font-display text-3xl sm:text-4xl font-semibold tracking-tight text-[#0f1f2a]">
+            Katalog Regulasi Nasional & Dokumen SOP Perusahaan
+          </h1>
+          <p className="max-w-2xl mt-2 text-sm sm:text-base leading-relaxed text-[#475863]">
+            Daftar seluruh dokumen resmi yang mendasari sistem Hybrid Retrieval (RRF) dan Audit Kepatuhan Otomatis di NusaPolicy v2.0.
+          </p>
         </div>
-        <button type="button" onClick={handleReindex} disabled={indexing} className="w-full lg:w-auto bg-[#0e716a] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#095c57] disabled:cursor-wait disabled:opacity-65">
-          {indexing ? "Mengindeks ulang…" : "Index ulang dokumen"}
+        <button
+          type="button"
+          onClick={handleReindex}
+          disabled={indexing}
+          className="min-h-[44px] rounded-md bg-[#0b6e66] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#08544e] disabled:opacity-65"
+        >
+          {indexing ? "Mengindeks Ulang Corpus..." : "Indeks Ulang Seluruh Dokumen"}
         </button>
       </section>
 
-      {message && <p className="mb-5 border-l-4 border-[#0e716a] bg-[#edf7f4] px-4 py-3 text-sm text-[#17645e]" role="status">{message}</p>}
+      {message && (
+        <p
+          className="rounded border-l-4 border-[#0b6e66] bg-[#eaf5f3] px-4 py-3 text-sm font-medium text-[#0b6e66]"
+          role="status"
+        >
+          {message}
+        </p>
+      )}
 
-      <section className="border border-[#d7ded9] bg-white shadow-[0_16px_36px_rgba(25,49,65,0.06)]" aria-labelledby="catalog-title">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#e1e6e2] px-5 py-4">
+      {/* Workspace Filter Pills */}
+      <div className="flex flex-wrap gap-2">
+        {[
+          { id: "all", label: `Semua Workspace (${documents.length})` },
+          { id: "ri-kemnaker", label: "Regulasi Ketenagakerjaan RI (PP 35 & 36/2021)" },
+          { id: "ri-uupdp", label: "Pelindungan Data Pribadi (UU PDP No. 27/2022)" },
+          { id: "nusaworks-corp", label: "SOP Internal Perusahaan (NusaWorks)" },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setSelectedWorkspaceFilter(tab.id)}
+            className={`min-h-[40px] rounded-md px-3.5 py-2 text-xs font-bold transition ${
+              selectedWorkspaceFilter === tab.id
+                ? "bg-[#0b6e66] text-white"
+                : "border border-[#d5e0dc] bg-white text-[#0f1f2a] hover:border-[#0b6e66]"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <section
+        className="rounded-lg border border-[#d5e0dc] bg-white shadow-sm overflow-hidden"
+        aria-labelledby="catalog-title"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#e5ece9] px-5 py-4 bg-[#f8faf9]">
           <div>
-            <h2 className="text-sm font-semibold text-[#193141]" id="catalog-title">Katalog dokumen</h2>
-            <p className="mt-1 text-xs text-[#708087]">Status indeks corpus PostgreSQL dan pgvector.</p>
+            <h2 className="text-sm font-bold text-[#0f1f2a]" id="catalog-title">
+              Katalog Dokumen Terindeks
+            </h2>
+            <p className="mt-0.5 text-xs text-[#475863]">
+              Setiap dokumen dipotong berdasarkan struktur Pasal/Bab untuk menjaga presisi sitasi.
+            </p>
           </div>
-          <span className="text-xs text-[#718087]">{documents.length} dokumen tersedia</span>
+          <span className="font-mono text-xs font-semibold text-[#0b6e66]">
+            {filteredDocs.length} dokumen ditampilkan
+          </span>
         </div>
+
         <div className="overflow-x-auto">
-          <table className="min-w-[740px] w-full text-left">
-            <thead className="border-b border-[#e1e6e2] bg-[#f8f8f5] text-xs text-[#647379]">
+          <table className="min-w-[760px] w-full text-left">
+            <thead className="border-b border-[#e5ece9] bg-[#f8faf9] text-xs font-bold text-[#475863]">
               <tr>
-                <th className="px-5 py-3.5 font-semibold">Dokumen</th>
-                <th className="px-5 py-3.5 font-semibold">Versi</th>
-                <th className="px-5 py-3.5 font-semibold">Sumber</th>
-                <th className="px-5 py-3.5 font-semibold">Status</th>
+                <th className="px-5 py-3.5">Judul Dokumen / Regulasi</th>
+                <th className="px-5 py-3.5">Workspace Tenant</th>
+                <th className="px-5 py-3.5">Versi</th>
+                <th className="px-5 py-3.5">Referensi / File Sumber</th>
+                <th className="px-5 py-3.5">Status Indeks</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e2e7e3] text-sm">
-              {documents.map((document) => (
-                <tr key={document.id} className="transition hover:bg-[#f4f8f6]">
-                  <td className="px-5 py-4 font-medium text-[#193141]">{document.title}</td>
-                  <td className="px-5 py-4 text-[#68777d]">{document.version}</td>
-                  <td className="px-5 py-4">
-                    <p className="max-w-[260px] truncate font-mono text-xs text-[#718087]" title={document.source_uri}>{document.source_uri}</p>
-                    {documentSourcePdfUrl(document) ? (
-                      <a href={documentSourcePdfUrl(document) ?? undefined} target="_blank" rel="noreferrer" className="mt-1.5 inline-block text-xs font-medium text-[#17645e] underline underline-offset-4 hover:text-[#0e716a]">
-                        Buka PDF sumber
-                      </a>
-                    ) : <span className="mt-1.5 inline-block text-xs text-[#96a1a1]">PDF belum tersedia</span>}
+            <tbody className="divide-y divide-[#e5ece9] text-sm">
+              {filteredDocs.map((document) => (
+                <tr key={document.id} className="transition hover:bg-[#f8faf9]">
+                  <td className="px-5 py-4 font-bold text-[#0f1f2a]">
+                    {document.title}
                   </td>
-                  <td className="px-5 py-4"><span className="inline-flex border border-[#b8d3cd] bg-[#f1faf7] px-2 py-1 text-[0.7rem] font-medium text-[#17645e]">{document.index_status}</span></td>
+                  <td className="px-5 py-4">
+                    <span className="rounded bg-[#eaf5f3] border border-[#b3c7c1] px-2.5 py-1 font-mono text-xs font-semibold text-[#0b6e66]">
+                      {(document.workspace_id || "nusaworks-corp").toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="px-5 py-4 text-xs font-mono text-[#475863]">
+                    {document.version}
+                  </td>
+                  <td className="px-5 py-4">
+                    <p
+                      className="max-w-[240px] truncate font-mono text-xs text-[#475863]"
+                      title={document.source_uri}
+                    >
+                      {document.source_uri}
+                    </p>
+                    {documentSourcePdfUrl(document) ? (
+                      <a
+                        href={documentSourcePdfUrl(document) ?? undefined}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-1 inline-block text-xs font-bold text-[#0b6e66] underline underline-offset-4 hover:text-[#08544e]"
+                      >
+                        Buka Dokumen / JDIH Resmi ↗
+                      </a>
+                    ) : (
+                      <span className="mt-1 inline-block text-xs text-[#5c6f7b]">
+                        Teks Markdown Terindeks
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-5 py-4">
+                    <span className="inline-flex rounded border border-[#b3c7c1] bg-[#eaf5f3] px-2.5 py-1 font-mono text-xs font-bold text-[#0b6e66]">
+                      {document.index_status}
+                    </span>
+                  </td>
                 </tr>
               ))}
-              {documents.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-sm text-[#718087]">Belum ada dokumen terindeks. Jalankan pengindeksan ulang saat API dan database aktif.</td></tr>}
             </tbody>
           </table>
         </div>
-      </section>
-
-      <section className="mt-10 grid md:grid-cols-2 gap-8 border-t border-[#cfd8d4] pt-7 text-sm leading-6 text-[#68777d]">
-        <p><strong className="text-[#193141]">Apa yang disimpan?</strong><br />Dokumen, metadata versi, potongan teks, embedding, serta jejak sitasi percakapan disimpan terpisah agar dapat diaudit.</p>
-        <p><strong className="text-[#193141]">Kapan perlu index ulang?</strong><br />Lakukan setelah menambah atau memperbarui dokumen source agar pencarian dan sitasi merefleksikan corpus terbaru. PDF ditampilkan sebagai artefak demo yang dapat diperiksa manusia.</p>
       </section>
     </div>
   );

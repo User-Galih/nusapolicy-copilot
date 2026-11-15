@@ -57,18 +57,26 @@ def load_markdown_corpus() -> tuple[list[DocumentSummary], list[dict]]:
         body = raw
 
         fm_match = re.match(r"^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$", raw)
+        workspace_id = "nusaworks-corp"
+        official_url = None
         if fm_match:
             fm, body = fm_match.group(1), fm_match.group(2)
             t_match = re.search(r"^title:\s*(.+)$", fm, re.MULTILINE)
             v_match = re.search(r"^version:\s*[\"']?([^\"'\r\n]+)[\"']?$", fm, re.MULTILINE)
+            w_match = re.search(r"^workspace_id:\s*[\"']?([^\"'\r\n]+)[\"']?$", fm, re.MULTILINE)
+            u_match = re.search(r"^official_url:\s*[\"']?([^\"'\r\n]+)[\"']?$", fm, re.MULTILINE)
             if t_match:
                 title = t_match.group(1).strip()
             if v_match:
                 version = v_match.group(1).strip()
+            if w_match:
+                workspace_id = w_match.group(1).strip()
+            if u_match:
+                official_url = u_match.group(1).strip()
 
         doc_id = _deterministic_uuid(f"doc:{md_file.name}")
         pdf_file = SOURCE_PDFS_DIR / f"{md_file.stem}.pdf"
-        pdf_url = f"/api/v1/documents/{doc_id}/source-pdf" if pdf_file.exists() else None
+        pdf_url = official_url if official_url else (f"/api/v1/documents/{doc_id}/source-pdf" if pdf_file.exists() else None)
 
         docs.append(
             DocumentSummary(

@@ -1,4 +1,12 @@
-import { ChatResponse, DocumentSummary } from "./types";
+import {
+  ChatResponse,
+  CustomUploadedDoc,
+  DocumentSummary,
+  PolicyAuditResponse,
+  StatutoryCalculationInput,
+  StatutoryCalculationResponse,
+  WorkspaceId,
+} from "./types";
 
 function getApiBase(): string {
   const configured = process.env.NEXT_PUBLIC_API_BASE_URL || "";
@@ -16,14 +24,17 @@ function getApiBase(): string {
   return configured;
 }
 
-async function fetchWithFallback(path: string, init?: RequestInit): Promise<Response> {
+async function fetchWithFallback(
+  path: string,
+  init?: RequestInit
+): Promise<Response> {
   const base = getApiBase();
   if (base) {
     try {
       const primary = await fetch(`${base}${path}`, init);
       if (primary.ok) return primary;
     } catch {
-      // Fall back to built-in Next.js serverless route handler on same origin
+      // Automatically fall back to same-origin Next.js serverless routes
     }
   }
   return fetch(path, init);
@@ -31,7 +42,11 @@ async function fetchWithFallback(path: string, init?: RequestInit): Promise<Resp
 
 export function sourcePdfUrl(sourcePdfPath: string | null): string | null {
   if (!sourcePdfPath) return null;
-  if (sourcePdfPath.startsWith("/source-documents-pdf/")) {
+  if (
+    sourcePdfPath.startsWith("http://") ||
+    sourcePdfPath.startsWith("https://") ||
+    sourcePdfPath.startsWith("/source-documents-pdf/")
+  ) {
     return sourcePdfPath;
   }
   return `${getApiBase()}${sourcePdfPath}`;
@@ -41,14 +56,51 @@ export function documentSourcePdfUrl(document: DocumentSummary): string | null {
   return sourcePdfUrl(document.source_pdf_url);
 }
 
-export async function sendChatMessage(question: string): Promise<ChatResponse> {
+export async function sendChatMessage(
+  question: string,
+  workspaceId: WorkspaceId = "all",
+  customDocuments: CustomUploadedDoc[] = []
+): Promise<ChatResponse> {
   const response = await fetchWithFallback(`/api/v1/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({
+      question,
+      workspace_id: workspaceId,
+      custom_documents: customDocuments,
+    }),
   });
   if (!response.ok) {
-    throw new Error(`Permintaan chat gagal (HTTP ${response.status})`);
+    throw new Error(`Permintaan tanya-jawab gagal (HTTP ${response.status})`);
+  }
+  return response.json();
+}
+
+export async function runPolicyAudit(
+  draftText: string,
+  framework: "kemnaker" | "uupdp" | "full" = "full"
+): Promise<PolicyAuditResponse> {
+  const response = await fetch(`/api/v1/audit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ draft_text: draftText, framework }),
+  });
+  if (!response.ok) {
+    throw new Error(`Audit dokumen gagal (HTTP ${response.status})`);
+  }
+  return response.json();
+}
+
+export async function runStatutoryCalculation(
+  input: StatutoryCalculationInput
+): Promise<StatutoryCalculationResponse> {
+  const response = await fetch(`/api/v1/calculate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  if (!response.ok) {
+    throw new Error(`Kalkulasi hukum gagal (HTTP ${response.status})`);
   }
   return response.json();
 }
