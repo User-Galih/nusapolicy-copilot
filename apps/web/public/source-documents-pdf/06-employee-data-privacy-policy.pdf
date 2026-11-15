@@ -1,0 +1,67 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1234 >>
+stream
+BT
+/F1 9 Tf
+40 760 Td
+13 TL
+(NUSAWORKS INTERNAL POLICY - CONFIDENTIAL) '
+(Document: Kebijakan Privasi Data Karyawan NusaWorks) '
+(Version: 1.0 | Owner: Legal and People Operations) '
+(Effective Date: 2026-10-01) '
+(--------------------------------------------------------------------------------) '
+() '
+([KEBIJAKAN PRIVASI DATA KARYAWAN]) '
+() '
+() '
+(>> 7.1 Data Pribadi) '
+() '
+(Data pribadi mencakup nama, alamat, nomor identitas, nomor rekening,) '
+(informasi kesehatan, dan data keluarga karyawan. Data tersebut hanya boleh) '
+(diproses untuk tujuan kerja yang sah.) '
+() '
+(>> 7.2 Akses dan Berbagi Data) '
+() '
+(Data pribadi hanya dapat diakses oleh fungsi yang memiliki kebutuhan kerja) '
+(dan otorisasi. Berbagi dengan vendor memerlukan perjanjian pemrosesan data) '
+(dan persetujuan Legal.) '
+() '
+(>> 7.3 Retensi Data) '
+() '
+(Data karyawan disimpan selama masa kerja dan tujuh tahun setelah hubungan) '
+(kerja berakhir, kecuali kewajiban hukum menetapkan periode yang lebih lama.) '
+() '
+(>> 7.4 Insiden Privasi) '
+() '
+(Dugaan kebocoran data pribadi harus dilaporkan segera melalui portal) '
+(incident dan ke privacy@nusaworks.example. Karyawan tidak boleh menyelidiki) '
+(atau menghubungi pihak eksternal sendiri.) '
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001527 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1595
+%%EOF
