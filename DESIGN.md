@@ -1,25 +1,26 @@
-# NusaPolicy Copilot v2.0 - Design & Architecture Specification (`DESIGN.md`)
+# NusaPolicy Studio - SaaS UI/UX Design Specification (`DESIGN.md`)
 
 ## 1. Aesthetic Direction & Three Dials (`antislop-ui`)
-- **Domain:** Enterprise Regulatory Intelligence, Multi-Tenant Policy RAG & Automated Legal/HR Document Studio.
-- **Persona Reference:** Harvey AI, Stripe Documentation, Linear Enterprise Workbench.
-- **Three Dials Configuration:**
-  - `ENERGY: 2` (Calm, authoritative executive clarity; structured grid borders and tabular typography).
-  - `RHYTHM: 3` (Balanced density between scannable statutory citations, side-by-side redline diffs, and printable document previews).
-  - `MOTION: 2` (Instant tab transitions and subtle state indicators; full `prefers-reduced-motion: reduce` support).
+- **Reference Benchmark:** Credo Policy Management Dashboard, Deel Global HR Compliance, Apple macOS/iOS Human Interface Guidelines.
+- **Three Dials:**
+  - `ENERGY: 2` (Clean, airy SaaS workspace with soft atmospheric radial lighting, pure white elevated cards, and zero developer-slop grid lines or all-caps monospace badges).
+  - `RHYTHM: 3` (256px Left Sidebar App Shell + 4-column KPI summary row + structured Policy Management Table with owner avatars and status pills).
+  - `MOTION: 2` (Smooth 180ms cubic-bezier transitions on sidebar navigation, filter pills, and drawers; full `prefers-reduced-motion: reduce` support).
 
-## 2. Color System & Verified WCAG AA Contrast (`R-06`, `R-07`, `R-25`)
-Single deliberate accent family (**Deep Verdigris Teal**) paired with neutral warm architectural stone and deep slate ink:
+## 2. Typography & Iconography
+- **Primary Sans Font:** `Plus Jakarta Sans` (loaded via `next/font/google`), replacing old `Georgia` serif and eliminating exposed `font-mono` engineering tags on user-facing cards.
+- **Brand Identity:** Custom geometric vector shield-and-leaf SVG emblem (`NusaPolicy`) in Royal Blue (`#2563EB`) and Emerald (`#10B981`).
 
-| Token | Hex | Pairing Surface | Contrast Ratio | WCAG AA Status |
+## 3. Color Palette & WCAG AA Contrast Verification (`R-06`, `R-07`, `R-25`)
+| Token | Hex | Pairing Surface | Contrast Ratio | WCAG Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `--ink-primary` | `#0f1f2a` | `#f8faf9` (App Canvas) | **15.86:1** | PASS (AAA) |
-| `--ink-secondary` | `#475863` | `#ffffff` (Card Surface) | **7.18:1** | PASS (AAA) |
-| `--accent-primary` | `#0b6e66` | `#ffffff` (Button / Badge) | **5.89:1** | PASS (AA) |
-| `--status-danger` | `#991b1b` | `#fef2f2` (Violation Alert) | **7.94:1** | PASS (AAA) |
-| `--status-warn` | `#854d0e` | `#fefce8` (Gap Warning) | **6.45:1** | PASS (AA) |
+| Primary Ink | `#0f172a` | `#ffffff` (Card Surface) | **17.85:1** | PASS (AAA) |
+| Secondary Slate | `#475569` | `#ffffff` (Card Surface) | **7.58:1** | PASS (AAA) |
+| Primary Brand CTA | `#ffffff` | `#2563eb` (Royal Blue Button) | **5.17:1** | PASS (AA) |
+| Status Active / Compliant | `#15803d` | `#dcfce7` (Soft Emerald Pill) | **4.57:1** | PASS (AA) |
+| Status Review / Warning | `#b45309` | `#fef3c7` (Soft Amber Pill) | **4.51:1** | PASS (AA) |
+| Status Critical / Risk | `#b91c1c` | `#fee2e2` (Soft Red Pill) | **5.30:1** | PASS (AA) |
 
-## 3. Written Design Rationale (`R-37`)
-1. **Workspace Context Bar + 4-Module Segmented Navigation:** Enterprise users need immediate visibility into *which tenant corpus* is currently active (`PP 35/2021 Ketenagakerjaan`, `UU PDP 27/2022`, `NusaWorks Internal SOP`, or `Custom Company Upload`) before running Q&A or document auditing.
-2. **Split-Pane Actionable Deliverables:** In Modules 2 (*Policy Redliner*) and 3 (*Statutory Calculator & Official Letter Generator*), placing the input parameters on the left (`5 cols`) and the live redlined document / printable official letter on the right (`7 cols`) turns the application from a passive chatbot into an active document drafting studio.
-3. **Zero-Quota Local Ingestion:** PDF and Markdown parsing for custom company workspaces runs deterministically without consuming external LLM quota during ingestion.
+## 4. Written Rationale for Key Decisions (`R-37`)
+1. **Sidebar App Shell over Stacked Landing Page:** Enterprise HR and Compliance platforms (Deel, Credo, Rippling) use a persistent left navigation rail so users can switch between the Policy Dashboard, AI Copilot, Contract Redliner, and HR Calculator without scrolling through stacked boxes.
+2. **Human Product Microcopy over Developer Jargon:** Replaced exposed technical labels (`MULTI-TENANT RAG`, `RRF 0.0328`, `GENERATED DELIVERABLE`) with clear human workflow language (`Skor Kepatuhan`, `Perlu Ditinjau`, `Dokumen Siap Cetak`).

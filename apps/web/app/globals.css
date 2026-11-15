@@ -4,17 +4,6 @@
 
 :root {
   color-scheme: light;
-  --bg-canvas: #f8faf9;
-  --bg-surface: #ffffff;
-  --bg-subtle: #f1f5f4;
-  --ink-primary: #0f1f2a;
-  --ink-secondary: #475863;
-  --ink-muted: #5c6f7b;
-  --accent-primary: #0b6e66;
-  --accent-hover: #08544e;
-  --accent-soft: #eaf5f3;
-  --border-subtle: #d5e0dc;
-  --border-strong: #b3c7c1;
 }
 
 * {
@@ -22,26 +11,28 @@
 }
 
 html {
-  background: var(--bg-canvas);
+  background-color: #f3f6fc;
   scroll-behavior: smooth;
 }
 
 body {
   min-width: 320px;
   margin: 0;
-  background-color: var(--bg-canvas);
+  background-color: #f3f6fc;
   background-image:
-    linear-gradient(rgba(15, 31, 42, 0.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 31, 42, 0.028) 1px, transparent 1px);
-  background-size: 36px 36px;
-  color: var(--ink-primary);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    radial-gradient(at 15% 0%, rgba(219, 234, 254, 0.7) 0px, transparent 55%),
+    radial-gradient(at 85% 5%, rgba(220, 252, 231, 0.55) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(254, 243, 199, 0.35) 0px, transparent 55%);
+  background-attachment: fixed;
+  color: #0f172a;
+  font-family: var(--font-jakarta), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: #bce0db;
-  color: #0f1f2a;
+  background: #dbeafe;
+  color: #1e3a8a;
 }
 
 button,
@@ -56,11 +47,28 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid rgba(11, 110, 102, 0.36);
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
 
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 @media print {
+  aside,
   header,
   footer,
   .no-print {
@@ -68,6 +76,7 @@ textarea:focus-visible {
   }
   body {
     background: #ffffff !important;
+    background-image: none !important;
   }
   .print-surface {
     border: none !important;
